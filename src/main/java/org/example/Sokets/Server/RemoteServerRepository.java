@@ -38,68 +38,68 @@ public class RemoteServerRepository implements Repository {
     }
 
     @Override
-    public int countTeams() throws RemoteException {
-        return repository.countTeams();
+    public int countCalendars() throws RemoteException {
+        return repository.countCalendars();
     }
 
     @Override
-    public int countPlayers() throws RemoteException {
-        return repository.countPlayers();
+    public int countDates() throws RemoteException {
+        return repository.countDates();
     }
 
     @Override
-    public void updateTeam(Team team) throws RemoteException {
-        repository.updateTeam(team);
+    public void updateCalendar(Calendar calendar) throws RemoteException {
+        repository.updateCalendar(calendar);
     }
 
     @Override
-    public void updatePlayer(Player player) throws RemoteException {
-        repository.updatePlayer(player);
+    public void updateDate(Date date) throws RemoteException {
+        repository.updateDate(date);
     }
 
     @Override
-    public void movePlayertoTeam(int playerId, int teamId) throws RemoteException {
-        repository.movePlayertoTeam(playerId, teamId);
+    public void moveDatetoCalendar(int dateId, int calendarId) throws RemoteException {
+        repository.moveDatetoCalendar(dateId, calendarId);
     }
 
     @Override
-    public void insertTeam(Team team) throws RemoteException {
-        repository.insertTeam(team);
+    public void insertCalendar(Calendar calendar) throws RemoteException {
+        repository.insertCalendar(calendar);
     }
 
     @Override
-    public void insertPlayer(int teamId, Player player) throws RemoteException {
-        repository.insertPlayer(teamId, player);
+    public void insertDate(int calendarId, Date date) throws RemoteException {
+        repository.insertDate(calendarId, date);
     }
 
     @Override
-    public void deleteTeam(int id) throws RemoteException {
-        repository.deleteTeam(id);
+    public void deleteCalendar(int id) throws RemoteException {
+        repository.deleteCalendar(id);
     }
 
     @Override
-    public void deletePlayer(int id) throws RemoteException {
-        repository.deletePlayer(id);
+    public void deleteDate(int id) throws RemoteException {
+        repository.deleteDate(id);
     }
 
     @Override
-    public Team getTeam(int id) throws RemoteException {
-        return repository.getTeam(id);
+    public Calendar getCalendar(int id) throws RemoteException {
+        return repository.getCalendar(id);
     }
 
     @Override
-    public Player getPlayer(int id) throws RemoteException {
-        return repository.getPlayer(id);
+    public Date getDate(int id) throws RemoteException {
+        return repository.getDate(id);
     }
 
     @Override
-    public List<Team> getTeams() throws RemoteException {
-        return repository.getTeams();
+    public List<Calendar> getCalendars() throws RemoteException {
+        return repository.getCalendars();
     }
 
     @Override
-    public List<Player> getPlayers() throws RemoteException {
-        return repository.getPlayers();
+    public List<Date> getDates() throws RemoteException {
+        return repository.getDates();
     }
 
     void start() {
@@ -110,12 +110,12 @@ public class RemoteServerRepository implements Repository {
 
                 boolean isOk = switch (operation) {
                     case 0 -> {
-                        out.writeInt(repository.countTeams());
+                        out.writeInt(repository.countCalendars());
 
                         yield true;
                     }
                     case 1 -> {
-                        out.writeInt(repository.countPlayers());
+                        out.writeInt(repository.countDates());
 
                         yield true;
                     }
@@ -124,7 +124,7 @@ public class RemoteServerRepository implements Repository {
                         byte[] bytes = new byte[size];
                         in.readFully(bytes);
 
-                        repository.updateTeam((Team) Serialization.fromBytes(bytes));
+                        repository.updateCalendar((Calendar) Serialization.fromBytes(bytes));
 
                         yield true;
                     }
@@ -133,15 +133,15 @@ public class RemoteServerRepository implements Repository {
                         byte[] bytes = new byte[size];
                         in.readFully(bytes);
 
-                        repository.updatePlayer((Player) Serialization.fromBytes(bytes));
+                        repository.updateDate((Date) Serialization.fromBytes(bytes));
 
                         yield true;
                     }
                     case 4 -> {
-                        int playerId = in.readInt();
-                        int teamId = in.readInt();
+                        int dateId = in.readInt();
+                        int calendarId = in.readInt();
 
-                        repository.movePlayertoTeam(playerId, teamId);
+                        repository.moveDatetoCalendar(dateId, calendarId);
 
                         yield true;
                     }
@@ -150,40 +150,40 @@ public class RemoteServerRepository implements Repository {
                         byte[] bytes = new byte[size];
                         in.readFully(bytes);
 
-                        repository.insertTeam((Team) Serialization.fromBytes(bytes));
+                        repository.insertCalendar((Calendar) Serialization.fromBytes(bytes));
 
                         yield true;
                     }
                     case 6 -> {
-                        int teamId = in.readInt();
+                        int calendarId = in.readInt();
 
                         int size = in.readInt();
                         byte[] bytes = new byte[size];
                         in.readFully(bytes);
 
-                        repository.insertPlayer(teamId, (Player) Serialization.fromBytes(bytes));
+                        repository.insertDate(calendarId, (Date) Serialization.fromBytes(bytes));
 
                         yield true;
                     }
                     case 7 -> {
                         int id = in.readInt();
 
-                        repository.deleteTeam(id);
+                        repository.deleteCalendar(id);
 
                         yield true;
                     }
                     case 8 -> {
                         int id = in.readInt();
 
-                        repository.deletePlayer(id);
+                        repository.deleteDate(id);
 
                         yield true;
                     }
                     case 9 -> {
                         int id = in.readInt();
 
-                        Team team = repository.getTeam(id);
-                        String bytes = Serialization.toString(team);
+                        Calendar calendar = repository.getCalendar(id);
+                        String bytes = Serialization.toString(calendar);
                         out.writeInt(bytes.length());
                         out.writeBytes(bytes);
 
@@ -192,20 +192,20 @@ public class RemoteServerRepository implements Repository {
                     case 10 -> {
                         int id = in.readInt();
 
-                        Player player = repository.getPlayer(id);
-                        String bytes = Serialization.toString(player);
+                        Date date = repository.getDate(id);
+                        String bytes = Serialization.toString(date);
                         out.writeInt(bytes.length());
                         out.writeBytes(bytes);
 
                         yield true;
                     }
                     case 11 -> {
-                        List<Team> teams = repository.getTeams();
+                        List<Calendar> calendars = repository.getCalendars();
 
-                        out.writeInt(teams.size());
+                        out.writeInt(calendars.size());
 
-                        for (Team team: teams) {
-                            String bytes = Serialization.toString(team);
+                        for (Calendar calendar: calendars) {
+                            String bytes = Serialization.toString(calendar);
                             out.writeInt(bytes.length());
                             out.writeBytes(bytes);
                         }
@@ -213,12 +213,12 @@ public class RemoteServerRepository implements Repository {
                         yield true;
                     }
                     case 12 -> {
-                        List<Player> players = repository.getPlayers();
+                        List<Date> dates = repository.getDates();
 
-                        out.writeInt(players.size());
+                        out.writeInt(dates.size());
 
-                        for (Player player: players) {
-                            String bytes = Serialization.toString(player);
+                        for (Date date: dates) {
+                            String bytes = Serialization.toString(date);
                             out.writeInt(bytes.length());
                             out.writeBytes(bytes);
                         }

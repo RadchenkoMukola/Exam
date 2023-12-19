@@ -1,8 +1,8 @@
 package org.example.Sokets.Client;
 
 
-import org.example.Core.Models.Player;
-import org.example.Core.Models.Team;
+import org.example.Core.Models.Date;
+import org.example.Core.Models.Calendar;
 import org.example.Core.Repositories.Repository;
 import org.example.Utils.Serialization;
 
@@ -26,7 +26,7 @@ public class RemoteClientRepository implements Repository {
     }
 
     @Override
-    public int countTeams() {
+    public int countCalendars() {
         try {
             out.writeInt(0);
             return in.readInt();
@@ -36,7 +36,7 @@ public class RemoteClientRepository implements Repository {
     }
 
     @Override
-    public int countPlayers() {
+    public int countDates() {
         try {
             out.writeInt(1);
             return in.readInt();
@@ -46,10 +46,10 @@ public class RemoteClientRepository implements Repository {
     }
 
     @Override
-    public void updateTeam(Team team) {
+    public void updateCalendar(Calendar calendar) {
         try {
             out.writeInt(2);
-            String bytes = Serialization.toString(team);
+            String bytes = Serialization.toString(calendar);
             out.writeInt(bytes.length());
             out.writeBytes(bytes);
         } catch (IOException e) {
@@ -58,10 +58,10 @@ public class RemoteClientRepository implements Repository {
     }
 
     @Override
-    public void updatePlayer(Player player) {
+    public void updateDate(Date date) {
         try {
             out.writeInt(3);
-            String bytes = Serialization.toString(player);
+            String bytes = Serialization.toString(date);
             out.writeInt(bytes.length());
             out.writeBytes(bytes);
         } catch (IOException e) {
@@ -70,21 +70,21 @@ public class RemoteClientRepository implements Repository {
     }
 
     @Override
-    public void movePlayertoTeam(int playerId, int teamId) {
+    public void moveDatetoCalendar(int dateId, int calendarId) {
         try {
             out.writeInt(4);
-            out.writeInt(playerId);
-            out.writeInt(teamId);
+            out.writeInt(dateId);
+            out.writeInt(calendarId);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void insertTeam(Team team) {
+    public void insertCalendar(Calendar calendar) {
         try {
             out.writeInt(5);
-            String bytes = Serialization.toString(team);
+            String bytes = Serialization.toString(calendar);
             out.writeInt(bytes.length());
             out.writeBytes(bytes);
         } catch (IOException e) {
@@ -93,11 +93,11 @@ public class RemoteClientRepository implements Repository {
     }
 
     @Override
-    public void insertPlayer(int teamId, Player player) {
+    public void insertDate(int calendarId, Date date) {
         try {
             out.writeInt(6);
-            out.writeInt(teamId);
-            String bytes = Serialization.toString(player);
+            out.writeInt(calendarId);
+            String bytes = Serialization.toString(date);
             out.writeInt(bytes.length());
             out.writeBytes(bytes);
         } catch (IOException e) {
@@ -106,7 +106,7 @@ public class RemoteClientRepository implements Repository {
     }
 
     @Override
-    public void deleteTeam(int id) {
+    public void deleteCalendar(int id) {
         try {
             out.writeInt(7);
             out.writeInt(id);
@@ -116,7 +116,7 @@ public class RemoteClientRepository implements Repository {
     }
 
     @Override
-    public void deletePlayer(int id) {
+    public void deleteDate(int id) {
         try {
             out.writeInt(8);
             out.writeInt(id);
@@ -127,7 +127,7 @@ public class RemoteClientRepository implements Repository {
     }
 
     @Override
-    public Team getTeam(int id) {
+    public Calendar getCalendar(int id) {
         try {
             out.writeInt(9);
             out.writeInt(id);
@@ -136,14 +136,14 @@ public class RemoteClientRepository implements Repository {
             byte[] bytes = new byte[size];
             in.readFully(bytes);
 
-            return (Team) Serialization.fromBytes(bytes);
+            return (Calendar) Serialization.fromBytes(bytes);
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Player getPlayer(int id) {
+    public Date getDate(int id) {
         try {
             out.writeInt(10);
             out.writeInt(id);
@@ -152,49 +152,49 @@ public class RemoteClientRepository implements Repository {
             byte[] bytes = new byte[size];
             in.readFully(bytes);
 
-            return (Player) Serialization.fromBytes(bytes);
+            return (Date) Serialization.fromBytes(bytes);
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public List<Team> getTeams() {
+    public List<Calendar> getCalendars() {
         try {
             out.writeInt(11);
 
             int count = in.readInt();
-            List<Team> teams = new ArrayList<>(count);
+            List<Calendar> calendars = new ArrayList<>(count);
 
             for (int i = 0; i < count; ++i) {
                 int size = in.readInt();
                 byte[] bytes = new byte[size];
                 in.readFully(bytes);
-                teams.add((Team) Serialization.fromBytes(bytes));
+                calendars.add((Calendar) Serialization.fromBytes(bytes));
             }
 
-            return teams;
+            return calendars;
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public List<Player> getPlayers() {
+    public List<Date> getDates() {
         try {
             out.writeInt(12);
 
             int count = in.readInt();
-            List<Player> players = new ArrayList<>(count);
+            List<Date> dates = new ArrayList<>(count);
 
             for (int i = 0; i < count; ++i) {
                 int size = in.readInt();
                 byte[] bytes = new byte[size];
                 in.readFully(bytes);
-                players.add((Player) Serialization.fromBytes(bytes));
+                dates.add((Date) Serialization.fromBytes(bytes));
             }
 
-            return players;
+            return dates;
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
